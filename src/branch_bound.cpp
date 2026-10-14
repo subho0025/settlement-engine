@@ -92,7 +92,7 @@ void unite(int u, int v, vector<int>& parent, vector<int>& sze){
     int pv = find(v, parent);
     if(pu==pv) return;
     if(sze[pu]>=sze[pv]){
-        parent[v]=u;
+        parent[pv]=pu;
         sze[pu]+=sze[pv];
     }else{
         parent[pu]=pv;
