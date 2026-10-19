@@ -28,8 +28,8 @@ compile_commands.json
 *.gcno
 *.profraw
 perf.data*
-core
-core.*
+/core
+/core.*
 vgcore.*
 
 .vscode/

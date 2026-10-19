@@ -1,7 +1,7 @@
 #pragma once
 #include <bits/stdc++.h>
-#include "types.hpp"
-#include "instance.hpp"
+#include "core/types.hpp"
+#include "core/instance.hpp"
 
 using namespace std;
 

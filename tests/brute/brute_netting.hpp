@@ -1,6 +1,6 @@
 #pragma once
 #include <bits/stdc++.h>
-#include "types.hpp"
+#include "core/types.hpp"
 
 using namespace std;
 
