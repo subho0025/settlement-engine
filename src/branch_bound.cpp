@@ -29,10 +29,13 @@ void refresh(int i, Amount& ub_total, vector<Bank>& banks){
     ub_total += banks[i].ub;
 }
 
-void dfs(long long& nodes, const Instance& inst, const vector<int>& pays, int pos, Amount curr_value, vector<bool>& curr_choices, 
+void dfs(long long& nodes, const long long& node_limit, const Instance& inst, const vector<int>& pays, int pos, Amount curr_value, vector<bool>& curr_choices, 
     Amount& best_value, vector<bool>& best_choices, vector<Bank>& banks, Amount& ub_total){
 
     nodes++;
+    if(node_limit>=0 && nodes> node_limit){
+        throw runtime_error("Nodes limit exceeded");
+    }
 
     if(ub_total<=best_value) return;
 
@@ -62,7 +65,7 @@ void dfs(long long& nodes, const Instance& inst, const vector<int>& pays, int po
         banks[to].curr_in+=amt;
         refresh(from, ub_total, banks);
         refresh(to, ub_total, banks);
-        dfs(nodes, inst,pays, pos+1, curr_value+amt, curr_choices, best_value, best_choices, banks, ub_total);
+        dfs(nodes, node_limit, inst,pays, pos+1, curr_value+amt, curr_choices, best_value, best_choices, banks, ub_total);
         curr_choices[pos]=0;
         banks[from].curr_out-=amt;
         banks[to].curr_in-=amt;
@@ -71,7 +74,7 @@ void dfs(long long& nodes, const Instance& inst, const vector<int>& pays, int po
     }
 
     if(banks[to].curr_out <= banks[to].cap+banks[to].curr_in+banks[to].rem_in){
-        dfs(nodes, inst, pays, pos+1, curr_value, curr_choices, best_value, best_choices, banks, ub_total);
+        dfs(nodes, node_limit, inst, pays, pos+1, curr_value, curr_choices, best_value, best_choices, banks, ub_total);
     }
 
     banks[from].rem_out+=amt;
@@ -100,7 +103,7 @@ void unite(int u, int v, vector<int>& parent, vector<int>& sze){
     }
 }
 
-void solve_comp(long long& nodes, const Instance& inst, const vector<int>& pays,
+void solve_comp(long long& nodes, const long long& node_limit, const Instance& inst, const vector<int>& pays,
     vector<bool>& chosen, vector<Bank>& banks){
 
     int k = (int)pays.size();
@@ -118,7 +121,7 @@ void solve_comp(long long& nodes, const Instance& inst, const vector<int>& pays,
         refresh(to, ub_total, banks);
     }
 
-    dfs(nodes, inst, pays, 0, 0, curr_choices, best_value, best_choices, banks, ub_total);
+    dfs(nodes, node_limit, inst, pays, 0, 0, curr_choices, best_value, best_choices, banks, ub_total);
 
     for(int i=0; i<k; i++){
         if(best_choices[i]){
@@ -169,12 +172,7 @@ vector<int> BranchBoundSolver :: solve(const Instance& inst){
         [&](const int x, const int y){
             return inst.obs[x].amt > inst.obs[y].amt;
         });
-        long long nodes =0;
-        solve_comp(nodes, inst, comp_pays[root], chosen, banks);
-        nodes_ += nodes;
-        if(node_limit_>=0 && nodes_> node_limit_){
-            throw runtime_error("Nodes limit exceeded");
-        }
+        solve_comp(nodes_, node_limit_, inst, comp_pays[root], chosen, banks);
     }
 
     vector<int> ans;
