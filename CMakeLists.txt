@@ -53,9 +53,13 @@ settle_module(gridlock
   SOURCES src/gridlock/fifo_bypass.cpp src/gridlock/drop_violators.cpp src/gridlock/branch_bound.cpp
   DEPS    settle_core)
 
+settle_module(flow
+  SOURCES src/flow/dinic.cpp
+  DEPS    settle_core)
+
 # everything at once, for tests and tools
 add_library(settle INTERFACE)
-target_link_libraries(settle INTERFACE settle_core settle_gen settle_netting settle_gridlock)
+target_link_libraries(settle INTERFACE settle_core settle_gen settle_netting settle_gridlock settle_flow)
 
 # --- apps ----------------------------------------------------------------------
 add_executable(gen apps/gen_main.cpp)
@@ -86,6 +90,7 @@ add_unit_test(netting/test_task7)
 add_unit_test(gridlock/test_task8)
 add_unit_test(gridlock/test_task9)
 add_unit_test(gridlock/test_task10)
+add_unit_test(flow/test_task11_dinic)
 
 # --- make targets ----------------------------------------------------------------
 #   make         build libraries, apps and tests (default target)
