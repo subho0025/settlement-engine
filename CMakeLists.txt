@@ -55,7 +55,7 @@ settle_module(gridlock
   DEPS    settle_core settle_flow)
 
 settle_module(flow
-  SOURCES src/flow/dinic.cpp
+  SOURCES src/flow/dinic.cpp src/flow/mcmf.cpp
   DEPS    settle_core)
 
 # everything at once, for tests and tools
@@ -93,6 +93,7 @@ add_unit_test(gridlock/test_task9)
 add_unit_test(gridlock/test_task10)
 add_unit_test(flow/test_task11_dinic)
 add_unit_test(gridlock/test_task11_relax)
+add_unit_test(flow/test_task12)
 
 # --- make targets ----------------------------------------------------------------
 #   make         build libraries, apps and tests (default target)
