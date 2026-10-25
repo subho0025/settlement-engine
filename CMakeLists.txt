@@ -58,9 +58,14 @@ settle_module(flow
   SOURCES src/flow/dinic.cpp src/flow/mcmf.cpp
   DEPS    settle_core)
 
+settle_module(routing
+  SOURCES src/routing/router.cpp
+  DEPS    settle_core settle_flow)
+
 # everything at once, for tests and tools
 add_library(settle INTERFACE)
-target_link_libraries(settle INTERFACE settle_core settle_gen settle_netting settle_gridlock settle_flow)
+target_link_libraries(settle INTERFACE settle_core settle_gen settle_netting settle_gridlock
+                      settle_flow settle_routing)
 
 # --- apps ----------------------------------------------------------------------
 add_executable(gen apps/gen_main.cpp)
@@ -95,6 +100,7 @@ add_unit_test(flow/test_task11_dinic)
 add_unit_test(gridlock/test_task11_relax)
 add_unit_test(flow/test_task12)
 add_unit_test(gridlock/test_task13)
+add_unit_test(routing/test_task14)
 
 # --- make targets ----------------------------------------------------------------
 #   make         build libraries, apps and tests (default target)
