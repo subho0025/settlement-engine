@@ -1,3 +1,4 @@
+#pragma once
 #include "core/types.hpp"
 
 using namespace std;

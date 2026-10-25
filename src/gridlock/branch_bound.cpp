@@ -1,4 +1,5 @@
 #include "gridlock/branch_bound.hpp"
+#include "core/components.hpp"
 
 using namespace std;
 
@@ -83,26 +84,6 @@ void dfs(long long& nodes, const long long& node_limit, const Instance& inst, co
     refresh(to, ub_total, banks);
 }
 
-int find(int v, vector<int>& parent){
-    if(parent[v]!=v){
-        return parent[v] = find(parent[v], parent);
-    }
-    return v;
-}
-
-void unite(int u, int v, vector<int>& parent, vector<int>& sze){
-    int pu = find(u, parent);
-    int pv = find(v, parent);
-    if(pu==pv) return;
-    if(sze[pu]>=sze[pv]){
-        parent[pv]=pu;
-        sze[pu]+=sze[pv];
-    }else{
-        parent[pu]=pv;
-        sze[pv]+=sze[pu];
-    }
-}
-
 void solve_comp(long long& nodes, const long long& node_limit, const Instance& inst, const vector<int>& pays,
     vector<bool>& chosen, vector<Bank>& banks){
 
@@ -147,32 +128,13 @@ vector<int> BranchBoundSolver :: solve(const Instance& inst){
         banks[o.to].rem_in += o.amt;
     }
 
-    vector<int> sze(inst.n, 1);
-    vector<int> parent(inst.n, 0);
-    for(int i=0; i<inst.n; i++){
-        parent[i]=i;
-    }
-
-    for(const Obligation& o: inst.obs){
-        if(find(o.from, parent)!=find(o.to, parent)){
-            unite(o.from, o.to, parent, sze);
-        }
-    }
-
-    vector<vector<int>> comp_pays(inst.n);
-    for(int p=0; p<m; p++){
-        comp_pays[find(inst.obs[p].from, parent)].push_back(p);
-    }
-
     vector<bool> chosen(m, 0);
 
-    for(int root=0; root<inst.n; root++){
-        if(comp_pays[root].empty()) continue;
-        stable_sort(comp_pays[root].begin(), comp_pays[root].end(),
-        [&](const int x, const int y){
+    for(vector<int>& pays: payment_components(inst)){
+        stable_sort(pays.begin(), pays.end(), [&](const int x, const int y){
             return inst.obs[x].amt > inst.obs[y].amt;
         });
-        solve_comp(nodes_, node_limit_, inst, comp_pays[root], chosen, banks);
+        solve_comp(nodes_, node_limit_, inst, pays, chosen, banks);
     }
 
     vector<int> ans;

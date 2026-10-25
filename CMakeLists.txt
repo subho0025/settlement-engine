@@ -38,7 +38,7 @@ function(settle_module name)
 endfunction()
 
 settle_module(core
-  SOURCES src/core/io.cpp src/core/validator.cpp src/core/net_balance.cpp)
+  SOURCES src/core/io.cpp src/core/validator.cpp src/core/net_balance.cpp src/core/components.cpp)
 
 settle_module(gen
   SOURCES src/gen/generators.cpp
@@ -51,7 +51,7 @@ settle_module(netting
 
 settle_module(gridlock
   SOURCES src/gridlock/fifo_bypass.cpp src/gridlock/drop_violators.cpp src/gridlock/branch_bound.cpp
-          src/gridlock/maxflow_relax.cpp
+          src/gridlock/maxflow_relax.cpp src/gridlock/lp_bound.cpp
   DEPS    settle_core settle_flow)
 
 settle_module(flow
@@ -94,6 +94,7 @@ add_unit_test(gridlock/test_task10)
 add_unit_test(flow/test_task11_dinic)
 add_unit_test(gridlock/test_task11_relax)
 add_unit_test(flow/test_task12)
+add_unit_test(gridlock/test_task13)
 
 # --- make targets ----------------------------------------------------------------
 #   make         build libraries, apps and tests (default target)
