@@ -38,10 +38,10 @@ function(settle_module name)
 endfunction()
 
 settle_module(core
-  SOURCES src/core/io.cpp src/core/validator.cpp src/core/net_balance.cpp src/core/components.cpp)
+  SOURCES src/core/io.cpp src/core/validator.cpp src/core/net_balance.cpp src/core/components.cpp src/core/day.cpp)
 
 settle_module(gen
-  SOURCES src/gen/generators.cpp
+  SOURCES src/gen/generators.cpp src/gen/day_gen.cpp
   DEPS    settle_core)
 
 settle_module(netting
@@ -63,7 +63,7 @@ settle_module(routing
   DEPS    settle_core settle_flow)
 
 settle_module(stream
-  SOURCES src/stream/engine.cpp
+  SOURCES src/stream/engine.cpp src/stream/replay.cpp
   DEPS    settle_core settle_gridlock)
 
 # everything at once, for tests and tools
@@ -75,6 +75,10 @@ target_link_libraries(settle INTERFACE settle_core settle_gen settle_netting set
 add_executable(gen apps/gen_main.cpp)
 target_link_libraries(gen PRIVATE settle_gen settle_core)
 target_compile_options(gen PRIVATE ${SETTLE_WARNINGS})
+
+add_executable(gen_day apps/gen_day.cpp)
+target_link_libraries(gen_day PRIVATE settle_gen settle_core)
+target_compile_options(gen_day PRIVATE ${SETTLE_WARNINGS})
 
 # --- tests ---------------------------------------------------------------------
 enable_testing()
@@ -106,6 +110,8 @@ add_unit_test(flow/test_task12)
 add_unit_test(gridlock/test_task13)
 add_unit_test(routing/test_task14)
 add_unit_test(stream/test_task15)
+add_unit_test(gen/test_task16)
+
 
 # --- make targets ----------------------------------------------------------------
 #   make         build libraries, apps and tests (default target)

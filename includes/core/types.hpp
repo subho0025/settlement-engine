@@ -7,6 +7,8 @@ using Amount = int64_t;
 using PartyId = int64_t;
 using Time = int64_t;
 
+const Time NO_DEADLINE = numeric_limits<Time>::max();
+
 struct Obligation{
     PartyId from;
     PartyId to;

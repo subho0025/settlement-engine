@@ -4,8 +4,6 @@
 
 using namespace std;
 
-const Time NO_DEADLINE = numeric_limits<Time>::max();
-
 struct EngineConfig {
     Time batch_interval = 0;
     size_t queue_trigger = 0;
