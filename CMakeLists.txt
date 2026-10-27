@@ -63,7 +63,7 @@ settle_module(routing
   DEPS    settle_core settle_flow)
 
 settle_module(stream
-  SOURCES src/stream/engine.cpp src/stream/replay.cpp
+  SOURCES src/stream/engine.cpp src/stream/replay.cpp src/stream/sim_runner.cpp
   DEPS    settle_core settle_gridlock)
 
 # everything at once, for tests and tools
@@ -79,6 +79,10 @@ target_compile_options(gen PRIVATE ${SETTLE_WARNINGS})
 add_executable(gen_day apps/gen_day.cpp)
 target_link_libraries(gen_day PRIVATE settle_gen settle_core)
 target_compile_options(gen_day PRIVATE ${SETTLE_WARNINGS})
+
+add_executable(simulate apps/simulate.cpp)
+target_link_libraries(simulate PRIVATE settle_stream settle_gen settle_core)
+target_compile_options(simulate PRIVATE ${SETTLE_WARNINGS})
 
 # --- tests ---------------------------------------------------------------------
 enable_testing()
@@ -111,6 +115,13 @@ add_unit_test(gridlock/test_task13)
 add_unit_test(routing/test_task14)
 add_unit_test(stream/test_task15)
 add_unit_test(gen/test_task16)
+add_unit_test(stream/test_task17)
+
+# the demo apps, end to end: generate a small day, then simulate it under two policies
+add_test(NAME app_gen_day COMMAND gen_day --config ${PROJECT_SOURCE_DIR}/configs/demo_small.cfg --out demo_day.csv)
+add_test(NAME app_simulate COMMAND simulate --day demo_day.csv
+        --sim ${PROJECT_SOURCE_DIR}/configs/sim/recycle_only.cfg --sim ${PROJECT_SOURCE_DIR}/configs/sim/relax_300.cfg)
+set_tests_properties(app_simulate PROPERTIES DEPENDS app_gen_day)
 
 
 # --- make targets ----------------------------------------------------------------
